@@ -35,4 +35,4 @@ Test the container
 ```
 curl http://localhost:8080
 ```
-> {"data":{"avg_gas_price":39685158629500002304},"statusCode":200}
+
