@@ -3,7 +3,6 @@ import os,csv,time,requests,json
 from datetime import datetime
 from statistics import mean
 from flask import Flask, jsonify
-from collections import deque
 import pandas as pd
 from threading import Thread
 
