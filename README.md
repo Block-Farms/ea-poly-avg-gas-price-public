@@ -3,7 +3,7 @@
 
 Clone the repo
 ```
-git clone <repo-link>
+git clone https://github.com/Block-Farms/ea-poly-avg-gas-price-public.git
 ```
 
 Build the container
