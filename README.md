@@ -18,7 +18,15 @@ sudo mkdir .pd-volumes && docker volume create --name ea-storage --opt type=none
 
 Run the container
 ```
-docker run --restart always -d --log-driver json-file --log-opt max-size=100m --log-opt max-file=1 --log-opt tag="{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}" -v ea-storage:/app/ -p 8080:8080 --name ea-avg-gas-price ea-avg-gas-price:latest
+docker run --restart always -d \
+    --log-driver json-file \
+    --log-opt max-size=100m \
+    --log-opt max-file=1 \
+    --log-opt tag="{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}" \
+    -v ea-storage:/app/ \
+    -p 8080:8080 \
+    --name ea-avg-gas-price \
+    ea-avg-gas-price:latest
 ```
 
 Remove the container
@@ -33,6 +41,13 @@ docker logs --tail 100 ea-avg-gas-price
 
 Test the container
 ```
-curl http://localhost:8080
+curl -X POST -H "Content-Type: application/json" -d '{}' http://localhost:8080
 ```
-
+```
+{
+  "data": {
+    "avg_gas_price": 45971385216599998464
+  },
+  "statusCode": 200
+}
+```
