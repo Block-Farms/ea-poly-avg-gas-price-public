@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 import os,csv,time,requests,json
 from datetime import datetime
-from statistics import mean
 from flask import Flask, jsonify
 import pandas as pd
 from threading import Thread
 
 app = Flask(__name__)
 poll_interval_seconds = 60
-max_array_len = 604800
+max_array_len = int(poll_interval_seconds * 60 * 24 * 7)
 url = 'https://gasstation-mainnet.matic.network/v2'
 
 def json_request(url):
@@ -31,21 +30,21 @@ def query_gas_price():
 
 def request_success(data):
     result = {
-        "data": {
-        "avg_gas_price": data
+        'data': {
+        'avg_gas_price': data
         },
-        "statusCode": 200,
+        'statusCode': 200,
     }
     return result
 
 def request_error(error):
     result = {
-        "error": "{}".format(error),
-        "statusCode": 500,
+        'error': '{}'.format(error),
+        'statusCode': 500,
     }
     return result
 
-@app.route('/')
+@app.route('/', methods=['POST'])
 def main():
     try:
         df = pd.read_csv(filename, header=None)
@@ -79,4 +78,4 @@ if __name__ == '__main__':
     filename = 'prices.csv'
     t = Thread(target=store_price)
     t.start()
-    app.run(host='0.0.0.0', port='8080')
+    app.run(debug=True, host='0.0.0.0', port='8080', threaded=True)
