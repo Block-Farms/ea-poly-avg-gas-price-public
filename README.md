@@ -51,3 +51,16 @@ curl -X POST -H "Content-Type: application/json" -d '{}' http://localhost:8080
   "statusCode": 200
 }
 ```
+
+Test the API URL of the EA from a Chainlink Node GUI via webhook job
+```
+type            = "webhook"
+schemaVersion   = 1
+name = "[WH] cbor0-v0"
+observationSource   = """
+    fetch [type="bridge" name="test" requestData="{}"]
+    parse [type=jsonparse path="data,avg_gas_price" data="$(fetch)"]
+
+    fetch -> parse
+"""
+```
