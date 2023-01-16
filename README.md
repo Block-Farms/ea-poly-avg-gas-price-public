@@ -6,7 +6,7 @@ Clone the repo
 git clone https://github.com/Block-Farms/ea-poly-avg-gas-price-public.git
 ```
 
-Build the container
+Build the image
 ```
 cd ea-poly-avg-gas-price && docker build -t ea-avg-gas-price .
 ```
