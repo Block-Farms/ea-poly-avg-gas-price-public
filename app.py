@@ -6,7 +6,7 @@ import pandas as pd
 from threading import Thread
 
 app = Flask(__name__)
-poll_interval_seconds = 5
+poll_interval_seconds = 60
 max_array_len = int(poll_interval_seconds * 24 * 7)
 url = 'https://gasstation-mainnet.matic.network/v2'
 is_store_price_running = False
