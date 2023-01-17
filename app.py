@@ -6,9 +6,10 @@ import pandas as pd
 from threading import Thread
 
 app = Flask(__name__)
-poll_interval_seconds = 60
-max_array_len = int(poll_interval_seconds * 60 * 24 * 7)
+poll_interval_seconds = 5
+max_array_len = int(poll_interval_seconds * 24 * 7)
 url = 'https://gasstation-mainnet.matic.network/v2'
+is_store_price_running = False
 
 def json_request(url):
     try:
@@ -58,19 +59,23 @@ def main():
         return jsonify(return_response)
 
 def store_price():
-    while True:
-        std_gas_price_wei = query_gas_price()
-        df = pd.DataFrame({0:std_gas_price_wei},index=[0])
-        if os.path.exists(filename) and os.stat(filename).st_size > 0:
-            df_existing = pd.read_csv(filename, header=None)
-            if len(df_existing) >= max_array_len:
-                df_existing = df_existing.drop(df_existing.index[0])
-            df = pd.concat([df_existing, df], ignore_index=True)
-            df.to_csv(filename, index=False, header=False)
-        else:
-            df.to_csv(filename, encoding='utf-8', index=False, header=False)
-        print('{} [INFO] Polling Standard Gas Price GWEI in {} seconds'.format(datetime.now(),poll_interval_seconds))
-        time.sleep(poll_interval_seconds)
+    global is_store_price_running
+    if not is_store_price_running:
+        is_store_price_running = True
+        while True:
+            std_gas_price_wei = query_gas_price()
+            df = pd.DataFrame({0:std_gas_price_wei},index=[0])
+            if os.path.exists(filename) and os.stat(filename).st_size > 0:
+                df_existing = pd.read_csv(filename, header=None)
+                if len(df_existing) >= max_array_len:
+                    df_existing = df_existing.drop(df_existing.index[0])
+                df = pd.concat([df_existing, df], ignore_index=True)
+                df.to_csv(filename, index=False, header=False)
+            else:
+                df.to_csv(filename, encoding='utf-8', index=False, header=False)
+            print('{} [INFO] Polling Standard Gas Price GWEI in {} seconds'.format(datetime.now(),poll_interval_seconds))
+            time.sleep(poll_interval_seconds)
+        is_store_price_running = False
 
 
 if __name__ == '__main__':
@@ -78,4 +83,4 @@ if __name__ == '__main__':
     filename = 'prices.csv'
     t = Thread(target=store_price)
     t.start()
-    app.run(debug=True, host='0.0.0.0', port='8080', threaded=True)
+    app.run(debug=False, host='0.0.0.0', port='8080', threaded=True)
